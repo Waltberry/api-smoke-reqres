@@ -1,8 +1,1 @@
-<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite name="pytest" errors="1" failures="0" skipped="0" tests="1" time="0.155" timestamp="2025-12-12T01:16:50.737430-07:00" hostname="LAPTOP-BVH01RTD"><testcase classname="" name="tests.api.test_reqres_smoke" time="0.000"><error message="collection failure">ImportError while importing test module 'C:\dev\api-smoke-reqres\tests\api\test_reqres_smoke.py'.
-Hint: make sure your test modules/packages have valid Python names.
-Traceback:
-C:\Users\onyer\AppData\Local\Programs\Python\Python312\Lib\importlib\__init__.py:90: in import_module
-    return _bootstrap._gcd_import(name[level:], package, level)
-tests\api\test_reqres_smoke.py:5: in &lt;module&gt;
-    from utils.http import get_client
-E   ModuleNotFoundError: No module named 'utils'</error></testcase></testsuite></testsuites>
+<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite name="pytest" errors="0" failures="0" skipped="2" tests="2" time="0.193" timestamp="2025-12-12T01:29:02.158137-07:00" hostname="LAPTOP-BVH01RTD"><testcase classname="tests.api.test_reqres_smoke" name="test_login_success" time="0.130"><skipped type="pytest.skip" message="https://reqres.in blocked/unstable (HTTP 403).">C:\dev\api-smoke-reqres\tests\api\test_reqres_smoke.py:106: https://reqres.in blocked/unstable (HTTP 403).</skipped></testcase><testcase classname="tests.api.test_reqres_smoke" name="test_login_missing_password" time="0.000"><skipped type="pytest.skip" message="https://reqres.in blocked/unstable (HTTP 403).">C:\dev\api-smoke-reqres\tests\api\test_reqres_smoke.py:114: https://reqres.in blocked/unstable (HTTP 403).</skipped></testcase></testsuite></testsuites>
