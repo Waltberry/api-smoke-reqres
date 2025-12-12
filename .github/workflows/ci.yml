@@ -7,15 +7,16 @@ jobs:
   test:
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest]
     env:
       PYTHONPATH: "."
       API_TIMEOUT: "15"
       API_BASE: "https://reqres.in"
-      API_SKIP_ON_403: "1" # skip if WAF/rate-limit hits
-      API_STRICT: "0"      # set to "1" to xfail instead of skip
-      PYTEST_ADDOPTS: "-q" # quieter output
+      API_SKIP_ON_403: "1"   # skip whole session if WAF / rate-limit blocks
+      API_STRICT: "0"        # set to "1" to xfail instead of skip
+      PYTEST_ADDOPTS: "-q"   # quieter output
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -30,14 +31,32 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run API smoke (with one retry)
-        shell: ${{ runner.os == 'Windows' && 'pwsh' || 'bash' }}
+      # ------- Linux/macOS path (bash) -------
+      - name: Run API smoke (bash) with one retry
+        if: runner.os != 'Windows'
+        shell: bash
         run: |
           echo "1st run..."
-          pytest || (
-            echo "Retrying once after short pause..." &&
-            ${{ runner.os == 'Windows' && 'Start-Sleep -Seconds 6; pytest' || 'sleep 6; pytest' }}
-          )
+          if pytest; then
+            echo "Passed on first run."
+          else
+            echo "Retrying once after short pause..."
+            sleep 6
+            pytest
+          fi
+
+      # ------- Windows path (PowerShell) -------
+      - name: Run API smoke (pwsh) with one retry
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          Write-Host "1st run..."
+          pytest
+          if ($LASTEXITCODE -ne 0) {
+            Write-Host "Retrying once after short pause..."
+            Start-Sleep -Seconds 6
+            pytest
+          }
 
       - name: Upload JUnit
         if: always()
@@ -45,6 +64,7 @@ jobs:
         with:
           name: junit-${{ matrix.os }}
           path: reports/junit
+          if-no-files-found: warn
 
       - name: Upload HTML report
         if: always()
